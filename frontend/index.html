@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinAnalytica — AI Аналитика компаний</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="antialiased">
+<div class="min-h-screen flex flex-col">
+  <!-- HEADER -->
+  <header class="py-6 px-6 lg:px-12 flex items-center justify-between max-w-7xl w-full mx-auto">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-panel border border-custom">
+        <div class="text-lg font-semibold text-accent">FA</div>
+      </div>
+      <div>
+        <div class="text-lg font-semibold">FinAnalytica</div>
+        <div class="text-xs text-muted">AI-аналитика компаний — строгий графитовый минимализм</div>
+      </div>
+    </div>
+    <nav class="flex items-center gap-3">
+      <button class="px-4 py-2 rounded-lg border border-custom text-sm">Войти</button>
+      <button class="px-4 py-2 rounded-lg bg-accent text-bg text-sm font-medium">Регистрация</button>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 pb-12">
+    <!-- Home View -->
+    <section id="homeView" class="space-y-6">
+      <div class="text-center mt-4">
+        <h1 class="text-3xl lg:text-4xl font-semibold">FinAnalytica — интеллект в сердце данных</h1>
+        <p class="mt-2 text-sm text-muted">Мониторинг компаний, AI-анализ новостей и визуальные отчёты.</p>
+      </div>
+
+      <!-- Search -->
+      <div class="mt-6 flex justify-center">
+        <div class="w-full max-w-3xl">
+          <div class="flex gap-3 items-center">
+            <input id="searchInput" type="search" placeholder="Найти компанию (например: Газпром, Сбербанк, Яндекс)"
+                   class="w-full px-4 py-4 rounded-xl bg-panel border border-custom focus:outline-none focus:ring-2 focus:ring-accent text-base" />
+            <button id="searchBtn" class="px-5 py-3 rounded-xl bg-accent text-bg font-semibold">Поиск</button>
+          </div>
+          <p class="mt-2 text-xs text-muted">Нажмите на карточку компании, чтобы открыть детальную страницу с графиком и новостями.</p>
+        </div>
+      </div>
+
+      <!-- В разделе Home View, после кнопок переключения: -->
+      <div class="mt-4 flex justify-center">
+        <div class="flex gap-2">
+          <button id="btnPublic" class="toggle-btn px-4 py-2 rounded-xl border text-sm bg-accent text-bg font-medium">
+            Публичные компании
+          </button>
+          <button id="btnPrivate" class="toggle-btn px-4 py-2 rounded-xl border text-sm bg-panel border-custom">
+            Непубличные компании
+          </button>
+        </div>
+      </div>
+
+      <!-- публичный список компаний (существующий cardsGrid) -->
+      <div id="cardsGrid" class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Cards will be injected by JS -->
+
+        <!-- Карточка Мировые новости -->
+        <div class="card rounded-2xl p-5 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/30 cursor-pointer smooth hover:card-focus" onclick="showWorldNews()">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-lg font-semibold">🌍 Мировые новости</div>
+              <div class="text-xs mt-1 text-muted">Все новости в одном месте</div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm text-muted">Обновлено</div>
+              <div class="text-xl font-bold text-purple-400">∞</div>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center gap-3 text-sm">
+            <div class="py-1 px-2 rounded bg-[rgba(168,85,247,0.15)] text-purple-400">AI анализ</div>
+            <div class="py-1 px-2 rounded bg-[rgba(34,197,94,0.15)] text-green-400">Все компании</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- пустой блок для непубличных -->
+      <div id="privateContainer"
+           class="hidden-section mt-4 rounded-2xl p-6 bg-[var(--panel)] border border-[var(--border)]">
+        <div class="text-sm" style="color:var(--muted)">
+          Здесь будут непубличные компании.
+        </div>
+      </div>
+    </section>
+
+    <!-- Company View -->
+    <section id="companyView" class="hidden-section mt-8 space-y-6">
+      <div class="flex items-center justify-between">
+        <button id="backBtn" class="px-3 py-2 rounded-lg border border-custom text-sm">← Назад</button>
+        <div class="text-sm text-muted">Страница компании — данные, график, новости и AI-анализ</div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left meta -->
+        <div class="col-span-1 rounded-2xl p-6 bg-panel border border-custom">
+          <h2 id="cName" class="text-2xl font-semibold">Компания</h2>
+          <p id="cSector" class="mt-1 text-sm text-muted">Сектор: —</p>
+
+          <div class="mt-6 space-y-3 text-sm">
+            <div>
+              <div class="text-xs text-muted">Выручка</div>
+              <div id="cRevenue" class="font-medium">—</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted">Годовой оборот</div>
+              <div id="cTurnover" class="font-medium">—</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted">Основатель</div>
+              <div id="cOwner" class="font-medium">—</div>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <div class="text-xs text-muted">Индекс репутации</div>
+            <div id="cIndex" class="text-3xl font-bold text-accent">—</div>
+          </div>
+        </div>
+
+        <!-- Right: chart + quick data -->
+        <div class="col-span-2 rounded-2xl p-6 bg-panel border border-custom">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-muted">График акций</div>
+              <div id="cTicker" class="text-lg font-semibold">—</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-muted">Текущая цена</div>
+              <div id="cPrice" class="text-xl font-bold">—</div>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <svg id="priceChart" viewBox="0 0 800 200" class="w-full h-48 rounded-md bg-[rgba(255,255,255,0.01)] border border-custom chart-grid">
+              <g class="chart-grid">
+                <line x1="0" y1="20" x2="800" y2="20"></line>
+                <line x1="0" y1="60" x2="800" y2="60"></line>
+                <line x1="0" y1="100" x2="800" y2="100"></line>
+                <line x1="0" y1="140" x2="800" y2="140"></line>
+                <line x1="0" y1="180" x2="800" y2="180"></line>
+              </g>
+              <path id="chartPath" d="" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <g id="chartDots"></g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- News block -->
+      <div class="rounded-2xl p-6 bg-panel border border-custom">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold">Новости и AI-анализ</h3>
+          <div class="flex gap-2">
+            <button class="periodBtn px-3 py-1 border border-custom rounded text-sm bg-accent text-bg font-medium" data-range="365">1d</button>
+            <button class="periodBtn px-3 py-1 border border-custom rounded text-sm" data-range="90">3d</button>
+            <button class="periodBtn px-3 py-1 border border-custom rounded text-sm" data-range="30">1w</button>
+            <button class="periodBtn px-3 py-1 border border-custom rounded text-sm" data-range="7">1m</button>
+            <button class="periodBtn px-3 py-1 border border-custom rounded text-sm" data-range="3">3m</button>
+            <button class="periodBtn px-3 py-1 border border-custom rounded text-sm" data-range="1">1y</button>
+          </div>
+        </div>
+
+        <div id="newsList"
+             class="mt-6 space-y-4 text-sm custom-scroll"
+             style="max-height: 400px; overflow-y: auto; padding-right: 6px;">
+        </div>
+      </div>
+    </section>
+
+    <!-- World News View -->
+    <section id="worldNewsView" class="hidden-section mt-8 space-y-6">
+      <div class="flex items-center justify-between">
+        <button onclick="showHomeView()" class="px-3 py-2 rounded-lg border border-custom text-sm">← Назад</button>
+        <div class="text-sm text-muted">Мировые новости — AI-анализ всех событий</div>
+      </div>
+
+      <!-- Статистика -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="rounded-2xl p-4 bg-panel border border-custom text-center">
+          <div class="text-2xl font-bold text-accent" id="totalNewsCount">0</div>
+          <div class="text-xs text-muted mt-1">Всего новостей</div>
+        </div>
+        <div class="rounded-2xl p-4 bg-panel border border-custom text-center">
+          <div class="text-2xl font-bold text-success" id="positiveNewsCount">0</div>
+          <div class="text-xs text-muted mt-1">Позитивных</div>
+        </div>
+        <div class="rounded-2xl p-4 bg-panel border border-custom text-center">
+          <div class="text-2xl font-bold text-danger" id="negativeNewsCount">0</div>
+          <div class="text-xs text-muted mt-1">Негативных</div>
+        </div>
+        <div class="rounded-2xl p-4 bg-panel border border-custom text-center">
+          <div class="text-2xl font-bold text-muted" id="neutralNewsCount">0</div>
+          <div class="text-xs text-muted mt-1">Нейтральных</div>
+        </div>
+      </div>
+
+      <!-- Фильтры -->
+      <div class="rounded-2xl p-6 bg-panel border border-custom">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold">Фильтры новостей</h3>
+          <div class="flex gap-2">
+            <button class="worldPeriodBtn px-3 py-1 border border-custom rounded text-sm bg-accent text-bg font-medium" data-range="365">Все</button>
+            <button class="worldPeriodBtn px-3 py-1 border border-custom rounded text-sm" data-range="7">Неделя</button>
+            <button class="worldPeriodBtn px-3 py-1 border border-custom rounded text-sm" data-range="1">Сегодня</button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <button class="toneFilterBtn px-3 py-1 border border-custom rounded text-sm bg-accent text-bg font-medium" data-tone="all">Все</button>
+          <button class="toneFilterBtn px-3 py-1 border border-success rounded text-sm" data-tone="positive">✅ Позитивные</button>
+          <button class="toneFilterBtn px-3 py-1 border border-danger rounded text-sm" data-tone="negative">❌ Негативные</button>
+          <button class="toneFilterBtn px-3 py-1 border border-muted rounded text-sm" data-tone="neutral">⚪ Нейтральные</button>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-3">
+          <button class="companyFilterBtn px-3 py-1 border border-custom rounded text-sm bg-accent text-bg font-medium" data-company="all">Все компании</button>
+          <button class="companyFilterBtn px-3 py-1 border border-custom rounded text-sm" data-company="SBER">Сбербанк</button>
+          <button class="companyFilterBtn px-3 py-1 border border-custom rounded text-sm" data-company="GAZP">Газпром</button>
+          <button class="companyFilterBtn px-3 py-1 border border-custom rounded text-sm" data-company="YNDX">Яндекс</button>
+          <button class="companyFilterBtn px-3 py-1 border border-custom rounded text-sm" data-company="LKOH">Лукойл</button>
+        </div>
+      </div>
+
+      <!-- News block -->
+      <div class="rounded-2xl p-6 bg-panel border border-custom">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold">Все новости</h3>
+          <div class="text-sm text-muted" id="worldNewsStats">Загружаем...</div>
+        </div>
+
+        <div id="worldNewsList"
+             class="space-y-4 text-sm custom-scroll"
+             style="max-height: 600px; overflow-y: auto; padding-right: 6px;">
+          <div class="text-center py-8 text-muted">
+            <div class="loading-spinner mx-auto mb-2"></div>
+            <div>Загрузка новостей...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-12 mb-8 text-center text-xs text-muted">© FinAnalytica — Demo</footer>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+  <div class="bg-panel border border-custom rounded-2xl p-8 w-full max-w-sm text-sm relative shadow-2xl transition-all duration-300 scale-95 opacity-0" id="modalBox">
+    <button id="closeModal" class="absolute top-3 right-3 text-muted hover:text-accent text-lg">✕</button>
+    <h2 id="modalTitle" class="text-xl font-semibold mb-5 text-center">Вход</h2>
+
+    <form id="authForm" class="space-y-3">
+      <input type="email" id="email" placeholder="E-mail" required
+             class="w-full px-3 py-2 rounded-lg bg-bg border border-custom focus:ring-2 focus:ring-accent outline-none">
+      <input type="password" id="password" placeholder="Пароль" required
+             class="w-full px-3 py-2 rounded-lg bg-bg border border-custom focus:ring-2 focus:ring-accent outline-none">
+      <button type="submit"
+              class="w-full py-2 rounded-lg bg-accent text-bg font-medium hover:opacity-90 smooth">Продолжить</button>
+    </form>
+
+    <p id="switchMode" class="text-center text-muted text-sm mt-4 cursor-pointer hover:text-accent">
+      Нет аккаунта? <span class="underline">Зарегистрироваться</span>
+    </p>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
