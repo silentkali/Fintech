@@ -12,6 +12,8 @@ const QUEUE_FILE = path.join(DATA_DIR, 'queue_news.json');
 
 // ОБНОВЛЕННЫЙ СПИСОК RSS ИСТОЧНИКОВ С TELEGRAM КАНАЛОМ
 const RSS_SOURCES = [
+    'https://rss.app/feeds/IQ0PQy3CTHnEtxPz.xml' ,
+    'https://rss.app/feeds/58xUYjfTTTVjx8p3.xml',
     'https://lenta.ru/rss',
     'https://tass.ru/rss/v2.xml',
     'https://www.interfax.ru/rss.asp',

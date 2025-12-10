@@ -28,7 +28,20 @@ export function initializePeriodButtons() {
 }
 
 export async function loadCompanyNews(symbol, maxDays = 365) {
-    const newsList = document.getElementById('newsList');
+    // Ищем список новостей: сначала приватный, потом публичный
+    let newsList = null;
+
+    const privateView = document.getElementById("companyViewPrivate");
+
+    if (privateView && privateView.style.display === "block") {
+        newsList = document.getElementById("pNews");
+    }
+
+    if (!newsList) {
+        newsList = document.getElementById("newsList");
+    }
+
+
     if (!newsList) return;
 
     newsList.innerHTML = '<div class="text-sm text-muted">Загрузка новостей...</div>';
@@ -46,8 +59,22 @@ export async function loadCompanyNews(symbol, maxDays = 365) {
 }
 
 export function renderNewsList(news, symbol) {
-    const newsList = document.getElementById('newsList');
+    let newsList = null;
+
+// Проверяем, открыт ли приватный шаблон
+    const privateView = document.getElementById("companyViewPrivate");
+
+    if (privateView && privateView.style.display === "block") {
+        newsList = document.getElementById("pNews");   // для приватной компании
+    }
+
+// Если приватная не активна — значит публичная
+    if (!newsList) {
+        newsList = document.getElementById("newsList"); // общий список новостей
+    }
+
     if (!newsList) return;
+
 
     if (!news || news.length === 0) {
         newsList.innerHTML = '<div class="text-sm text-muted">Новостей за период нет</div>';

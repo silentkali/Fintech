@@ -125,8 +125,8 @@
           </div>
         </div>
 
-        <!-- Right: chart + quick data -->
-        <div class="col-span-2 rounded-2xl p-6 bg-panel border border-custom">
+          <!-- Right: chart + quick data -->
+          <div id="chartContainer" class="col-span-2 rounded-2xl p-6 bg-panel border border-custom">
           <div class="flex items-center justify-between">
             <div>
               <div class="text-sm text-muted">График акций</div>
@@ -175,7 +175,60 @@
       </div>
     </section>
 
-    <!-- World News View -->
+      <section id="companyViewPrivate" class="hidden-section mt-8 space-y-6" style="display:none;">
+          <div class="flex items-center justify-between">
+              <button id="backBtnPrivate" class="px-3 py-2 rounded-lg border border-custom text-sm">← Назад</button>
+              <div class="text-sm text-muted">Страница компании — данные и новости</div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Left meta -->
+              <div class="col-span-1 rounded-2xl p-6 bg-panel border border-custom">
+                  <h2 id="pName" class="text-2xl font-semibold">Компания</h2>
+                  <p id="pSector" class="mt-1 text-sm text-muted">Сектор: —</p>
+
+                  <div class="mt-6 space-y-3 text-sm">
+                      <div>
+                          <div class="text-xs text-muted">Выручка</div>
+                          <div id="pRevenue" class="font-medium">—</div>
+                      </div>
+                      <div>
+                          <div class="text-xs text-muted">Годовой оборот</div>
+                          <div id="pTurnover" class="font-medium">—</div>
+                      </div>
+                      <div>
+                          <!-- 🔥 ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ -->
+                          <div class="text-xs text-muted">Местонахождение</div>
+                          <div id="pLocation" class="font-medium">—</div>
+                      </div>
+                  </div>
+
+                  <div class="mt-6">
+                      <div class="text-xs text-muted">Индекс репутации</div>
+                      <div id="pIndex" class="text-3xl font-bold text-accent">—</div>
+                  </div>
+              </div>
+
+              <!-- Правый блок тоже вставляем как в публичном — менять его НЕ НУЖНО -->
+              <div id="chartContainerPrivate" class="col-span-2 rounded-2xl p-6 bg-panel border border-custom" style="display:none;">
+                  <!-- график скрыт стилем display:none -->
+              </div>
+
+          </div>
+
+          <!-- News block -->
+          <div class="rounded-2xl p-6 bg-panel border border-custom">
+              <h3 class="text-lg font-semibold">Новости и AI-анализ</h3>
+              <div id="pNews"
+                   class="mt-6 space-y-4 text-sm custom-scroll"
+                   style="max-height: 400px; overflow-y: auto; padding-right: 6px;">
+              </div>
+          </div>
+      </section>
+
+
+
+      <!-- World News View -->
     <section id="worldNewsView" class="hidden-section mt-8 space-y-6">
       <div class="flex items-center justify-between">
         <button onclick="showHomeView()" class="px-3 py-2 rounded-lg border border-custom text-sm">← Назад</button>

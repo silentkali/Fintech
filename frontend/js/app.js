@@ -6,6 +6,23 @@ import { initializeNewsRenderer } from './newsRenderer.js';
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 FinAnalytica Frontend запущен');
 
+    // === Обработчик кнопки "Назад" ===
+    const backBtn = document.getElementById('backBtn');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            showHomeView();
+        });
+    }
+
+    // === Обработчик кнопки "Назад" для непубличных компаний ===
+    const backBtnPrivate = document.getElementById('backBtnPrivate');
+    if (backBtnPrivate) {
+        backBtnPrivate.addEventListener('click', () => {
+            showHomeView();
+        });
+    }
+
+
     // Инициализация всех модулей
     initializeCharts();
     initializeSearch();
@@ -78,7 +95,7 @@ let privateCompanies = [
         index: 85,
         turnover: '₽200 млрд',
         owner: 'Правительство РФ',
-        prices: [1200, 1250, 1230, 1270, 1250, 1300, 1280, 1320, 1300, 1350]
+        // График удалён - нет массива prices
     }
 ];
 
@@ -189,7 +206,8 @@ async function loadAllCompanies() {
         let companies = await response.json();
 
         // Фильтруем компании - убираем Волтайр-Пром из публичных
-        publicCompanies = companies.filter(company => company.symbol !== 'VOLP');
+        publicCompanies = companies.filter(c => c.public === true);
+        privateCompanies = companies.filter(c => c.public === false);
 
         const cardsGrid = document.getElementById('cardsGrid');
         if (cardsGrid && publicCompanies.length > 0) {
@@ -301,12 +319,25 @@ function showCompanyView(symbol) {
 function showHomeView() {
     const homeView = document.getElementById('homeView');
     const companyView = document.getElementById('companyView');
+    const privateView = document.getElementById('companyViewPrivate');
     const worldNewsView = document.getElementById('worldNewsView');
 
+    // скрываем оба шаблона компаний
     companyView.classList.add('hidden-section');
+    companyView.style.display = "none";
+
+    privateView.classList.add('hidden-section');
+    privateView.style.display = "none";
+
+    // скрываем мировые новости
     worldNewsView.classList.add('hidden-section');
+
+    // показываем домашнюю страницу
     homeView.classList.remove('hidden-section');
+    homeView.style.display = "block";
 }
+
+
 
 function showWorldNews() {
     const homeView = document.getElementById('homeView');
@@ -489,40 +520,82 @@ function formatDate(dateString) {
 
 async function loadCompanyData(symbol) {
     try {
-        // Проверяем, является ли компания публичной или приватной
+        // Находим компанию
         let company = publicCompanies.find(c => c.symbol === symbol);
         if (!company) {
             company = privateCompanies.find(c => c.symbol === symbol);
         }
 
-        if (company) {
-            // Заполняем данные компании
-            document.getElementById('cName').textContent = company.name;
-            document.getElementById('cSector').textContent = `Сектор: ${company.sector}`;
-            document.getElementById('cRevenue').textContent = company.revenue;
-            document.getElementById('cTurnover').textContent = company.turnover || '—';
-            document.getElementById('cOwner').textContent = company.owner || '—';
-            document.getElementById('cIndex').textContent = company.index;
-            document.getElementById('cTicker').textContent = company.symbol;
-            document.getElementById('cPrice').textContent = company.price;
+        const homeView = document.getElementById('homeView');
+        const companyView = document.getElementById('companyView');
+        const privateView = document.getElementById('companyViewPrivate');
+        const chart = document.getElementById('chartContainer');
 
-            // Отрисовываем график, если есть данные
-            if (company.prices && company.prices.length > 0) {
-                renderPriceChart(company.prices, company.name);
-            }
+        // --- Всегда скрываем оба шаблона перед показом нужного ---
+        companyView.classList.add("hidden-section");
+        privateView.classList.add("hidden-section");
 
-            // Загружаем новости компании
-            document.dispatchEvent(new CustomEvent('openCompany', {
-                detail: { symbol: symbol }
-            }));
-        } else {
-            console.error('❌ Компания не найдена:', symbol);
+        companyView.style.display = "none";
+        privateView.style.display = "none";
+
+        homeView.classList.add("hidden-section");
+
+        if (!company) {
+            console.error("Компания не найдена:", symbol);
+            return;
         }
 
+        // ============ ШАБЛОН ДЛЯ НЕПУБЛИЧНЫХ КОМПАНИЙ ============
+        if (company.public === false) {
+
+            chart.style.display = "none";
+
+            privateView.classList.remove("hidden-section");
+            privateView.style.display = "block";
+
+            document.getElementById('pName').textContent = company.name;
+            document.getElementById('pSector').textContent = `Сектор: ${company.sector}`;
+            document.getElementById('pRevenue').textContent = company.revenue;
+            document.getElementById('pTurnover').textContent = company.turnover || '—';
+            document.getElementById('pLocation').textContent = company.location || '—';
+            document.getElementById('pIndex').textContent = company.index;
+
+            // Сообщаем остальным модулям, что открыт приватный (непубличный) профиль
+            document.dispatchEvent(new CustomEvent('openCompany', {
+                detail: { symbol: company.symbol, isPrivate: true }
+            }));
+
+
+            return;
+        }
+
+        // ============ ШАБЛОН ДЛЯ ПУБЛИЧНЫХ КОМПАНИЙ ============
+        companyView.classList.remove("hidden-section");
+        companyView.style.display = "block";
+        chart.style.display = "block";
+
+        document.getElementById('cName').textContent = company.name;
+        document.getElementById('cSector').textContent = `Сектор: ${company.sector}`;
+        document.getElementById('cRevenue').textContent = company.revenue;
+        document.getElementById('cTurnover').textContent = company.turnover || '—';
+        document.getElementById('cOwner').textContent = company.owner || '—';
+        document.getElementById('cIndex').textContent = company.index;
+        document.getElementById('cTicker').textContent = company.symbol;
+        document.getElementById('cPrice').textContent = company.price;
+
+        if (company.prices && company.prices.length > 0) {
+            renderPriceChart(company.prices, company.name);
+        }
+
+        document.dispatchEvent(new CustomEvent('openCompany', {
+            detail: { symbol: symbol }
+        }));
+
     } catch (error) {
-        console.error('❌ Ошибка загрузки данных компании:', error);
+        console.error('Ошибка загрузки компании:', error);
     }
 }
+
 
 // Глобальные функции для доступа из HTML
 window.openCompany = (symbol) => {
@@ -537,13 +610,6 @@ window.performSearch = () => {
 window.showHomeView = showHomeView;
 window.showWorldNews = showWorldNews;
 
-// Обработчик кнопки "Назад"
-document.addEventListener('DOMContentLoaded', () => {
-    const backBtn = document.getElementById('backBtn');
-    if (backBtn) {
-        backBtn.addEventListener('click', showHomeView);
-    }
-});
 
 // Экспорт функции renderPriceChart для использования в charts.js
 window.renderPriceChart = function(prices, companyName) {

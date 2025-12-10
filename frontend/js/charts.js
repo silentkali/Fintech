@@ -22,6 +22,10 @@ export function drawCompanyChart(symbol) {
 }
 
 export function renderPriceChart(prices, companyName) {
+
+    // ❗ Если это Волтайр-Пром — график не рисуем
+    if (companyName === "Волтайр-Пром") return;
+
     const svg = document.getElementById('priceChart');
     const chartPath = document.getElementById('chartPath');
     const chartDots = document.getElementById('chartDots');

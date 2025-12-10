@@ -8,7 +8,6 @@ import newsRoutes from "./src/routes/news.js";
 import companiesRoutes from "./src/routes/companies.js";
 import analysisRoutes from "./src/routes/analysis.js";
 import { unifiedNewsProcessing } from "../services/unifiedProcessor.js";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
