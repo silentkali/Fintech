@@ -55,12 +55,12 @@ export function renderPriceChart(prices, companyName) {
 
     chartPath.setAttribute('d', d);
 
-    // Обновляем заголовок
-    const chartTitle = document.querySelector('#priceChart + .text-sm') ||
-        document.createElement('div');
-    if (!chartTitle.textContent) {
+    // Обновляем заголовок с динамическим названием компании
+    let chartTitle = document.querySelector('#priceChart + .text-sm');
+    if (!chartTitle) {
+        chartTitle = document.createElement('div');
         chartTitle.className = 'text-sm mt-2 text-muted';
-        chartTitle.textContent = `График акций ${companyName}`;
         svg.parentNode.appendChild(chartTitle);
     }
+    chartTitle.textContent = `График акций ${companyName}`; // Используем переданное имя компании
 }
